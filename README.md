@@ -1,6 +1,3 @@
-# $Id: README,v 1.84 2006/01/28 22:11:12 andreas_o Exp $ #
-
-
 Introduction
 ~~~~~~~~~~~~
 
