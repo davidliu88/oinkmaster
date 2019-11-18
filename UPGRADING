@@ -1,0 +1,55 @@
+# $Id: UPGRADING,v 1.27 2006/01/28 21:41:31 andreas_o Exp $ #
+
+Usually you just overwrite the old oinkmaster.pl file with the new one 
+and then run as usual. A good tip though is to always have a quick look 
+at the new documentation and default oinkmaster.conf for new options and 
+features. Also, to be on the safe side it's recommended to do an extra 
+backup of the rules first and to do a test run with -c (careful mode) to 
+make sure you don't get unexpected results.
+
+Here are a few notes about issues between specific versions that might 
+require some attention. 
+
+
+
+0.9 -> 1.0
+----------
+You can now run without external binaries if you set use_external_bins 
+to 0 in oinkmaster.conf and have the required Perl modules. It's set to 0 
+by default on Win32 (since ActivePerl 5.8.1+ comes with the required Perl 
+modules) and 1 by default on other system (i.e. keep old behavior).
+Add "use_external_bins = 0" or "use_external_bins = 1" to override the 
+default. See the new default oinkmaster.conf for more information.
+
+Because the layout of the Snort rules archives has changed on 
+www.snort.org, you must make sure that "url" is correctly set to point to 
+the right version for your version of Snort. See oinkmaster.conf or the 
+Oinkmaster FAQ for more information.
+
+
+
+0.7 -> 0.8
+----------
+The arguments to 'modifysid' are now regarded as regular expressions, 
+so if you're using that, it may (or may not) mean that you have to 
+adjust your arguments to reflect this. 
+ 
+
+
+0.6 -> 0.7
+----------
+
+When upgrading to 0.7, you should know that oinkmaster.conf will now
+be searched for in /usr/local/etc/ by default (instead of in the current
+directory). You will have to put it there or use the -C argument.
+
+
+
+0.3 -> 0.4
+----------
+The file oinkmaster.conf is now used for configuration. It's probably 
+easiest to start with the new default config and apply your old 
+customization to it. The "file" and "sid" keywords have been renamed to 
+"skipfile" and "disablesid" respectively. Also, a few command line 
+switches were removed since they're not needed anymore.
+Please read the new documentation.

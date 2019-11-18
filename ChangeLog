@@ -1,0 +1,440 @@
+# $Id: ChangeLog,v 1.186 2006/02/18 12:16:47 andreas_o Exp $ #
+
+Oinkmaster v2.0 - 20060218
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+o Major version bump to celebrate that Oinkmaster has now turned 5
+  years old!
+o When using the -U argument to merge new variables, you can now also 
+  specify -S <file> to specify which files in the downloaded rules 
+  archive(s) to search for new variables. If -S is not specified, only 
+  snort.conf is searched, just like before. As usual, no variable 
+  merge is done unless -U is specified. You may specify multiple
+  -S <file> arguments to search for variables in multiple files, e.g. 
+  "... -S snort.conf -S foo.conf ...".
+o Handle multi-line variable definitions when merging variables.
+o Obfuscate the oinkcode when printing URLs, unless running in verbose
+  mode.
+o Added ability to grab rules files from a local directory by 
+  specifying dir://<directory> as URL.
+o Suppress warnings about using modifysid on non-existent SIDs when 
+  running in quiet mode.
+o Added some modifysid sanity checks
+o Added Q33 to the FAQ on how to disable all rules by default and
+  only activate specific ones, with example how to automatically
+  update only a few selected rules from Bleeding Snort.
+o Other documentation updates.
+o Misc improvements to the config file parser.
+o You can now set the HTTP User-Agent header string for Oinkmaster by
+  specifying "user_agent = ..." in oinkmaster.conf. The default
+  User-Agent string is unchanged, i.e. the string that LWP or wget set
+  it to by default. Based on patch from Derek Edwards.
+o Make contrib/addmsg.pl handle some multi-line statements.
+o contrib/create-sidmap.pl:
+  - don't ignore rules that are commented out
+  - ignore the file deleted.rules by default (you don't use it, do you?!)
+
+
+
+Oinkmaster v1.2 - 20050417
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+o Slightly improved modifysid/template documentation and examples.
+  For example, added a new template to disable a SID but only if it has 
+  a specific revision number so you can disable a rule temporarily and 
+  automatically start using it again if it becomes updated. Thanks to 
+  Russell Fulton for this suggestion.
+o Suppress warnings about non-matching modifysid expressions when
+  running in super quiet mode (-Q).
+o Permit .tgz suffix for rules archive.
+o Permit filename as argument to modifysid (and use_template) to apply
+  a substitution expression on all rules in the specified files(s).
+o You can now download multiple rules archives from different URLs at
+  the same time, either by specifying several -u <url> on the command
+  line or by using several url=<url> directives in the Oinkmaster
+  configuration file(s). See the default oinkmaster.conf and the FAQ
+  for more information. 
+o Many updates to the FAQ, especially regarding how to update rules 
+  from multiple sources. Also added info about how to use Oinkmaster
+  after Sourcefire changed the license of the rules.
+o Because of the license change, no URL is specified in the default
+  oinkmaster.conf anymore. You will have to follow the instructions
+  in there and activate the requested URL(s).
+o modifysid/use_template statements of all types will now be processed
+  in the exact order as specified in the config file. Previously, all
+  the wildcards were processed last.
+o Slightly improved error handling when running under Windows.
+o Removed some useless buttons and changed default URL list in the GUI.
+o Misc other minor fixes.
+
+
+
+Oinkmaster v1.1 - 20041009
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+o Support template-based modifysid expressions so you can define a 
+  template once and then use that one instead of repeating complex 
+  modifysid expressions. Documentation for this is found in 
+  README.templates and usage examples is found in template-examples.conf.
+o New option -s for summarized output (aka bmc mode) to leave out the
+  details when printing results for added/removed/modified rules.
+  Only the sid and msg string of the rules are printed, plus the
+  filename. Non-rule changes are printed as usual.
+o New option -m to minimize/simplify the resulting output for modified
+  rules. This means that identical leading and trailing parts of the
+  new and old rule are removed so the actual change is much easier to
+  see. Some characters to the left and right of the diffing parts
+  are kept to get some context. More information and example output can
+  be found in the updated manual page (oinkmaster.1).
+o Support -s and -m in the GUI as well (the "diff mode" buttons)
+o Better handling of duplicate rules (i.e. rules with the same SID) for
+  files in the downloaded archive:
+  - If all the duplicates are disabled, only one of them is passed on to 
+    the local rules file
+  - If one of the rules is enabled and the other one disabled, the
+    disabled one is discarded
+  - If both rules are active, the one with the highest 'rev' is used
+  - If one of the rules has a rev and the other does not, the one with
+    the rev is used
+  - If the duplicate rules have the same rev, the one appearing last 
+    in the file is used
+o You can now split long configuration directives in oinkmaster.conf to
+  multiple lines using the regular trailing \ syntax.
+o All modifysid substitutions on multi-line rules (including when using
+  templates) now work on the single-line version of the rule so that you
+  don't have to care about where the trailing backslashes and newlines are.
+o When running in super quiet mode (-Q), possible warnings about
+  duplicate SIDs in the downloaded rules are suppressed.
+o Allow location of editor to be set in the GUI and do not search for a
+  default one in a predefined list anymore.
+o Removed 'P' flag from tar as it is incompatible together with 't' in
+  gtar, which is now used by default on FreeBSD 5.2-CURRENT and later
+  (PR ports/70806). Thanks to Saneto Takanori for reporting.
+o The GUI will now always use the same Perl binary when executing 
+  oinkmaster.pl as the one running the GUI itself.
+o By popular demand: support marking rules as locally modified to prevent
+  them from being overwritten. See oinkmaster.conf and the FAQ for 
+  documentation about "localsid". Do not use this unless you really have 
+  to as it's very easy to end up with lots of sigs that aren't maintained
+  anymore.
+o The default URL in oinkmaster.conf is now
+  http://www.snort.org/dl/rules/snortrules-snapshot-2_2.tar.gz as 2.2
+  is the latest stable version of Snort at the time of this release.
+o The FAQ has been updated, especially the sections about local 
+  customization of rules.
+o Fixed bug so -e works correctly in conjunction with modifysid.
+  Thanks to Alex Butcher.
+o Fixed bug that prevented ability to load multiple configs under Win32.
+o Fixed bug so that modifysid expressions are case-insensitive again
+  (as documented).
+o Fixed a bunch of documentation typos (thanks to JP Vossen!).
+
+
+
+Oinkmaster v1.0 - 20040515
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+o Default URL in distribution oinkmaster.conf is now
+  http://www.snort.org/dl/rules/snortrules-snapshot-2_1.tar.gz. Don't
+  forget to change it if it's not the right one for your version
+  of Snort!
+o You can now set "rule_actions = ..." in oinkmaster.conf to tell 
+  Oinkmaster what keywords are valid as the start of a Snort rule. Useful 
+  if you create your own ruletypes and want those lines to be regarded as 
+  rules instead of non-rule lines. If unset, 
+  "alert|drop|log|pass|reject|sdrop|activate|dynamic" will be used 
+  (same as before).
+o You can now run without external binaries if you have the required
+  Perl modules installed (Archive::Tar, IO::Zlib and LWP::UserAgent).
+  You can set use_external_bins to 0 or 1 in oinkmaster.conf to override
+  the default. 0 means to use the Perl modules, 1 means to use external
+  binaries. It's set to 0 by default on Win32 (since the required
+  Perl modules are already included in ActivePerl 5.8.1+), and 1 on other
+  systems (i.e. same behavior as before). This makes it much easier to
+  install Oinkmaster on Windows/ActivePerl. See the new default
+  oinkmaster.conf for more information.
+o A simple graphical multi-platform front-end to Oinkmaster written in
+  Perl/Tk is included in the contrib directory (oinkgui.pl). 
+  See README.gui for more information. Screenshots are available on
+  Oinkmaster's homepage.
+o contrib/makesidex.pl has been rewritten to handle multi-line rules and 
+  multiple rules directories. It will now also include the rule's "msg" 
+  string as a comment on each disablesid line it prints. Usage syntax is 
+  unchanged. 
+o The other contrib scripts have been improved with misc feature updates
+  and small bug fixes as well. For example, addmsg.pl now handles 
+  multiple rules directories just like the others. All scripts now give
+  a short description when run without arguments. Full descriptions can
+  still be found in contrib/README.contrib.
+o The new default oinkmaster.conf has been updated with more and better
+  examples (mostly "modifysid" stuff).
+o Slightly improved multi-line rule parsing.
+o Perl version is checked on startup and must be >= 5.6.1.
+o Permission on all rules files in the output directory that are subject
+  to become updated by Oinkmaster (i.e. files matching the "update_rules"
+  regexp and that are not ignore by a "skipfile") are now checked
+  before starting, so that we don't bail out in a middle of
+  execution if a copy of an updated file should fail because of
+  permission problem.
+o A manual page is now included which describes all the command 
+  line options in detail.
+o Major documentation updates (INSTALL, README, README.win32, FAQ).
+o Many other improvements.
+
+
+
+Oinkmaster v0.9 - 20031201
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+o It's much faster now.
+o Added ability to use "include <file>" in oinkmaster configuration
+  files. <file> will be parsed (just like a regular oinkmaster.conf) as
+  soon as the include statement is seen, and then return and continue
+  parsing the rest of the original file. If an option is re-defined, it
+  will override the previous value. You can use as many 'include'
+  statements as you wish, and also include even more files from included
+  files.
+o Also permit an arbitrary number of "-C" arguments to be specified on
+  command line to load multiple config files. They will be loaded in the
+  order of appearance. Thanks to Rickard Cedergren for inspiration with
+  his 'policy-based sensor setup' doc and patch.
+o Permit https://... in url specification. Only useful if your wget is
+  SSL-enabled and you download from an SSL-enabled site.
+o Permit scp://<user>@<remotehost>:<file.tar.gz> in url specification.
+  The rules archive will be copied from remotehost using scp (only tested
+  with OpenSSH). You can specify a private key with scp_key = ... in
+  oinkmaster.conf (or set it in ~/.ssh/config).
+o You can now specify "-i" for interactive mode. You will be asked to
+  approve the changes before Oinkmaster modifies anything.
+o Added 'enablesid' option to oinkmaster.conf.
+o Slightly improved rules parsing (order of sid and msg does not matter).
+o oinkmaster.conf will be searched for in /etc/ and /usr/local/etc/ by default.
+o Make contrib/create-sidmap.pl and contrib/addsid.pl take an arbitrary number
+  of directories as argument.
+o Added a FAQ.
+o wget is now always run in verbose mode, although the output is not displayed
+  unless you run Oinkmaster in verbose mode as well, or if an error occurs (i.e.
+  no more need to re-run in verbose mode just to get decent error messages).
+o deleted.rules is now ignored (with a "skipfile delete.rules") in the 
+  default oinkmaster.conf.
+o You can now specify a wildcard ('*') to the modifysid keyword, like 
+  modifysid * "foo" | "bar", to apply the substitution expression to all
+  matching rules. This enables you to do stuff like convert all rules of a
+  certain classtype to 'drop' rules, or replace all 'flow' keywords with 
+  "flags: A+;", and so on. See oinkmaster.conf for examples.
+o Include seconds in filename of backup tarball.
+o File::Temp is used for creation of temporary directory. You probably 
+  already have that module unless you run an ancient version of Perl.
+o Many other minor improvements.
+
+
+
+Oinkmaster v0.8 - 20030902
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+o Experimental multi-line rule support.
+o Make contrib/addsid.pl and contrib/addmsg.pl handle multi-line rules as well.
+o Added create-sidmap.pl to contrib section. It's a script that generates 
+  a SID map from a directory with rules files. (Like Snort's Regen-sidmap,
+  but this one handles multi-line rules).
+o The 'modifysid' keyword now regards the arguments as regular expressions.
+  So if you already use this function, you may have to adjust the arguments.
+  Based on a patch from operator@email.it. Also added a bunch of examples.
+o Understand Snort_inline's "drop", "sdrop" and "reject" rules.
+o You can now start Perl with tainting checks enabled if you like, if
+  you have a reasonably recent version of Perl.
+o The default temporary directory will be checked for in the environment
+  variables TMP, TMPDIR and TEMPDIR. "/tmp" will be used if none was set.
+  You can override this by setting tmpdir in oinkmaster.conf.
+o A bunch of Win32/Cygwin fixes, mostly from Ueli Kistler <iuk@gmx.ch>.
+o A bunch of fixes that makes it work on native Win32 with ActivePerl.
+o Added a README.win32 with information about Oinkmaster on Windows.
+o Added command line argument "-T" to test the configuration and then exit.
+o Better check for duplicate SIDs. Check is done across all files now, and
+  duplicate SIDs in downloaded archive are discarded (only first one is 
+  kept) and not copied to the local files. This will avoid some annoying 
+  warning messages about duplicates in the local files that won't go away 
+  until the files gets updated again. Pointed out by elof@sentor.se.
+o Slightly modified format when printing results 
+  (hopefully easier to read when there are a large number of changes).
+o New options in oinkmaster.conf: min_files and min_rules.
+  If number of rules files or number of rules are not at least min_files
+  and min_rules respectively, the rules tarball is regarded as broken and
+  the update is aborted. Both are set to 1 by default.
+o New command line option, -U <file>. If specified, variable definitions that
+  exist in the distribution snort.conf but not in <file>
+  will be inserted at the beginning of it. See README for more info.
+o Avoid using move() from File::Copy since some versions of it lies about
+  the error message (e.g. "Cross-device link" instead of "Permission denied").
+  Thanks to Del Armstrong for investigating this issue!
+
+
+
+Oinkmaster v0.7 - 20030217
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+o oinkmaster.conf will now be searched for in /usr/local/etc/ by
+  default (instead of in the current directory).
+  You will have to put it there or use the -C argument.
+o Don't print warning when using "-e" in quiet mode.
+o "-p" ("preserve comments") is now not just obsolete, but invalid.
+o New argument, "-Q" to run in über-quiet mode.
+  Same as quiet mode except that it doesn't print the "None." stuff
+  when printing results.
+o Support file://<filename> syntax in URL specification.
+  Rules archive will be copied directly from the local filesystem
+  (which must have been put there ahead of time).
+  Suggested by aidan.carty@entropy.ie.
+o sid-msg.map will now be updated by default.
+o Warn instead of exit in case of invalid lines in the config file.
+o Added possibility to modify SIDs, using the "modifysid" keyword
+  in the config file (use with care).
+o Added makesidex.pl by Jerry Applebaum <JApplebaum@APTEGRITY.com>
+  to contrib section. Useful to new Oinkmaster users who already
+  have many rules commented out and don't want to create oinkmaster.conf
+  manually from scratch. It strips out the SIDs from everything you've
+  commented out and writes them out in a format that can be appended to
+  oinkmaster.conf.
+o Added addmsg.pl (by myself) to contrib section.
+  It's a script that will parse your oinkmaster.conf for "disablesid" lines
+  and add to them their SID message as a #comment.
+o Fixed bug related to deleted rules printout.
+o Default URL is now 
+  http://www.snort.org/dl/rules/snortrules-stable.tar.gz.
+o In verbose mode, print warning if a file in the downloaded archive is empty.
+o Don't require write permission in the output directory when running with -c.
+  Pointed out by arjones@simultan.dyndns.org.
+o Don't care about trailing whitespaces for non-rule lines (to avoid getting
+  a diff where the same line appears to have been both added and removed when
+  only a trailing whitespace has been removed etc).
+o Allow umask to be specified in oinkmaster.conf.
+o Many internal cleanups and minor bug fixes.
+
+
+
+Oinkmaster v0.6 - 20020706
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+o Rules that are disabled by default in the rules distribution
+  will now NOT be re-enabled by Oinkmaster by default, finally.
+  I.e. "-p" is obsolete. If you want to enable those rules you now
+  have to use "-e".
+o A couple of minor documentation updates.
+
+
+
+Oinkmaster v0.5 - 20020506
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+o Fixed bug where all filenames would not always be printed.
+o Fixed minor whitespace idiocy.
+o Print which rules that are being preserved or enabled (for rules that
+  are commented out by default) when running in verbose mode.
+o SID dup warnings will no longer be printed when running in quiet mode.
+o Document example where running silently as a cron job, only
+  sending e-mail when there were updates available.
+o Document that using -p is usually a good idea.
+
+
+
+Oinkmaster v0.4 - 20020422
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+o More or less rewritten from scratch.
+o The file rules.ignore has been renamed to oinkmaster.conf, which contains
+  more than just the SIDs to disable (have a look at it).
+o Slightly improved error checking.
+o Better output format (or at least it has changed).
+o Oinkmaster will now also update other files (and print changes in them) than
+  *.rules and classification.conf. The default is now *.rules, *.conf, *.config,
+  *.txt and *.map so we also update the MIB and sid-msg.map files for example.
+  Files to be updated is defined by a regexp in oinkmaster.conf so this can
+  easily be changed.
+o Removed several stupid command line options.
+o Print warning message if two (or more) rules share the same SID.
+o Added option -p to preserve disabled rules in downloaded archive.
+o "file" and "sid" keywords in oinkmaster.conf are now invalid.
+  They are instead called "skipfile" and "disablesid" (to avoid confusion
+  when possibly adding new keywords in the future).
+o Instead of specifying one "disablesid X" per line, you can now also use
+  comma-separated lists, e.g. "disablesid 1,2,3,4,42".
+  Same goes for the skipfile keyword.
+o Various minor bug fixes and tweaks.
+o Some documentation updates.
+
+
+
+Oinkmaster v0.3 - never (was rewritten and became v0.4)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+
+Oinkmaster v0.2 - 20010906
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+o Added optional "-a <attempts>" argument (which is passed to wget's "-t" argument)
+  to configure maximum number of download retries before giving up.
+o Warning message will be printed if there is any invalid line in the ignore file.
+o Fixed a few stupid bugs.
+o Default URL is now http://www.snort.org/downloads/snortrules.tar.gz
+  PLEASE be aware of the following description of the rules in the above archive:
+  "This is a CVS snapshot of the snort signatures every 30 minutes.
+  NOTE: These signatures may only work with snort-current"
+
+
+
+Oinkmaster v0.1 - 20010726
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+o Initial release (based on arachnids_upd v0.4).
+
+
+
+arachnids_upd v0.4 - 20010526
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+o Minor optimization fix, which a few people pointed out.
+
+
+
+arachnids_upd v0.3 - 20010508
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+o Much more easy-to-read output of the rule changes
+  (the diff command is no longer used).
+  The changes are split into eight categories:
+
+o Added (new):
+  - New rule (the IDS number did not exist in the old ruleset).
+o Added (enabled):
+  - The rule (with this IDS number) was commented in the old ruleset, but is
+    now activated.
+o Added (enabled) and modified:
+  -  The rule (with this IDS number) was commented in the old ruleset, but
+     is now activated. The actual rule had also been modified.
+o Removed (deleted):
+  - The rule (with this IDS number) does no longer exist in any way.
+o Removed (disabled):
+  - The rule (with this IDS number) still exists but have now been commented.
+o Removed (disabled) and modified:
+  - The rule (with this IDS number) still exists but have now been commented.
+    The actual rule had also been modified.
+o Modified active:
+  - The rule (with this IDS number) have been modified and is an active rule.
+o Modified inactive:
+   -  The rule (with this IDS number) have been modified but is currently an
+      inactive (commented) rule.
+
+o Added INSTALL file with basic installation instructions.
+o Minor enhancements.
+o Minor documentation updates.
+
+
+
+arachnids_upd v0.2 - 20010422
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+o The ruleset file in the URL must now be gzipped.
+  Default URL is now http://www.whitehats.com/ids/vision.rules.gz.
+  An integrity check (gzip -t) will be run on this file after download.
+o You must now use -b <directory> instead of just -b.
+  Backups will be stored in this directory.
+o If there were no changes in the new ruleset, no backup will be done and the
+  current ruleset will remain untouched.
+o Added contribution script from Dejan Muhamedagic (see contrib/).
+  I'm not sure it's quite as useful now in v0.2 though.
+o Added -q option to run in quiet mode. No output unless the rules had changed.
+o Minor documentation updates.
+o Minor bug fixes and other minor enhancements
+  (see arachnids_upd.pl -h for new options).
+
+
+
+arachnids_upd v0.1 - 20010210
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+o Initial release.
